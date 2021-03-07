@@ -5,7 +5,7 @@ import numpy as np
 import pickle
 from dataset.mnist import load_mnist
 from common.functions import sigmoid, softmax
-
+import time
 
 def get_data():
     (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, flatten=True, one_hot_label=False)
@@ -14,7 +14,7 @@ def get_data():
 
 def init_network():
     with open("sample_weight.pkl", 'rb') as f:
-        network = pickle.load(f)
+        network = pickle.load(f)  # https://korbillgates.tistory.com/173
     return network
 
 
@@ -35,10 +35,12 @@ def predict(network, x):
 x, t = get_data()
 network = init_network()
 accuracy_cnt = 0
+start = time.time()
 for i in range(len(x)):
     y = predict(network, x[i])
     p= np.argmax(y) # 확률이 가장 높은 원소의 인덱스를 얻는다.
-    if p == t[i]:
+#    print( "# y: %f, p:%d, t[%d]:%d" % (y[p], p, i, t[i]) )
+    if p == t[i]: # 인덱스가 0~9 사이의 값이므로 인덱스 값이 정답 t[i]와 동일하면 정확도 count를 1로 늘린다.
         accuracy_cnt += 1
-
+print("time :", time.time() - start)
 print("Accuracy:" + str(float(accuracy_cnt) / len(x)))
